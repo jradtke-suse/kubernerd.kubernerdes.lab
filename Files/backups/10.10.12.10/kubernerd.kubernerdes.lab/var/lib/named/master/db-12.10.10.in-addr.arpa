@@ -1,0 +1,54 @@
+$TTL 2D 
+12.10.10.in-addr.arpa.   IN SOA dns.kubernerdes.lab. root.kubernerdes.lab. ( 
+                        2025070701	; serial
+                        1D              ; refresh
+                        2H              ; retry
+                        1W              ; expiry
+                        2D )            ; minimum
+
+                        IN NS           kubernerd.kubernerdes.lab. 
+                        IN NS           bohemia.kubernerdes.lab. 
+
+1	IN	PTR	sophos-xgs88.kubernerdes.lab.
+2	IN	PTR	cisco-sg300-28.kubernerdes.lab.
+3	IN	PTR	airport-extreme.kubernerdes.lab.
+10	IN	PTR	kubernerd.kubernerdes.lab.
+11	IN	PTR	bohemia.kubernerdes.lab.
+12	IN	PTR	librenms.kubernerdes.lab.
+
+100	IN	PTR	harvester.kubernerdes.lab.
+101	IN	PTR	nuc-01.kubernerdes.lab.
+102	IN	PTR	nuc-02.kubernerdes.lab.
+103	IN	PTR	nuc-03.kubernerdes.lab.
+104	IN	PTR	nuc-04.kubernerdes.lab.
+105	IN	PTR	nuc-05.kubernerdes.lab.
+
+111	IN	PTR	nuc-01-bmc.kubernerdes.lab.
+112	IN	PTR	nuc-02-bmc.kubernerdes.lab.
+113	IN	PTR	nuc-03-bmc.kubernerdes.lab.
+114	IN	PTR	nuc-04-bmc.kubernerdes.lab.
+115	IN	PTR	nuc-05-bmc.kubernerdes.lab.
+
+119	IN	PTR	rancher-lb.kubernerdes.lab.
+120	IN	PTR	rancher.kubernerdes.lab.
+121	IN	PTR	rancher-01.kubernerdes.lab.
+122	IN	PTR	rancher-02.kubernerdes.lab.
+123	IN	PTR	rancher-03.kubernerdes.lab.
+
+140	IN	PTR	vmw-vcenter-01.kubernerdes.lab.
+141	IN	PTR	vmw-esx-01.kubernerdes.lab.
+142	IN	PTR	vmw-esx-02.kubernerdes.lab.
+
+151	IN	PTR	truenas.kubernerdes.lab.
+
+161	IN	PTR	xaviernx-01.kubernerdes.lab.
+162	IN	PTR	xaviernx-02.kubernerdes.lab.
+163	IN	PTR	xaviernx-03.kubernerdes.lab.
+
+171	IN	PTR	harv-rke2-01.kubernerdes.lab.
+172	IN	PTR	harv-rke2-02.kubernerdes.lab.
+173	IN	PTR	harv-rke2-03.kubernerdes.lab.
+
+201	IN	PTR	suse-mlm-01.kubernerdes.lab.
+250	IN	PTR	aperaturelabs.kubernerdes.lab.
+251	IN	PTR	aristotle.kubernerdes.lab.

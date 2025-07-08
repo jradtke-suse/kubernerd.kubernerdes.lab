@@ -1,0 +1,12 @@
+$TTL 2D 
+14.10.10.in-addr.arpa.   IN SOA dns.kubernerdes.lab. root.kubernerdes.lab. ( 
+                        2025061401	; serial
+                        1D              ; refresh
+                        2H              ; retry
+                        1W              ; expiry
+                        2D )            ; minimum
+
+                        IN NS           kubernerd.kubernerdes.lab. 
+                        IN NS           bohemia.kubernerdes.lab. 
+
+1	IN	PTR	gateway.kubernerdes.lab.
