@@ -10,16 +10,18 @@ TARGET_BASEDIR="../Files/backups/${TARGET_ADDR}"
 
 LOCAL_HOSTNAME=kubernerd.kubernerdes.lab
 
-SOURCE_DIRECTORIES="
+SOURCE_CONTENT="
 /etc/dhcpd.d/
 /etc/dhcpd.conf
 /etc/named.conf
 /var/lib/named/master/
+/srv/www/htdocs/index*
+/srv/www/htdocs/.kube/.htaccess
 "
 echo mkdir -p "${TARGET_BASEDIR}/${LOCAL_HOSTNAME}"
 
 # The -R maintains the absolute path
-for DIRECTORY in $SOURCE_DIRECTORIES
+for DIRECTORY in $SOURCE_CONTENT
 do
   echo "rsync -tugrpolvv -R ${TARGET_USER}@${TARGET_ADDR}:${DIRECTORY} ${TARGET_BASEDIR}/${LOCAL_HOSTNAME} "
   rsync -tugrpolvv -R ${TARGET_USER}@${TARGET_ADDR}:${DIRECTORY} ${TARGET_BASEDIR}/${LOCAL_HOSTNAME} 

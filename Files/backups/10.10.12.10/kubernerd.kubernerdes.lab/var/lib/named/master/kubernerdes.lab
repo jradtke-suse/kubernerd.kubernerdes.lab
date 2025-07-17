@@ -56,7 +56,7 @@ suse-mlm-01	IN	A	10.10.12.201
 aperaturelabs 	IN	A	10.10.12.250
 aristotle 	IN	A	10.10.12.251
 
-# DHCP CIDR 10.10.15.0/24
+; DHCP CIDR 10.10.15.0/24
 dhcp-1	 IN	 A	 10.10.15.1
 dhcp-2	 IN	 A	 10.10.15.2
 dhcp-3	 IN	 A	 10.10.15.3
@@ -311,3 +311,7 @@ vpn-dhcp-251	 IN	 A	 10.10.15.251
 vpn-dhcp-252	 IN	 A	 10.10.15.252
 vpn-dhcp-253	 IN	 A	 10.10.15.253
 vpn-dhcp-254	 IN	 A	 10.10.15.254
+
+; Application Wildcard Endpoints
+*.apps.rke2-harv.kubernerdes.lab. IN A 10.10.12.120
+
