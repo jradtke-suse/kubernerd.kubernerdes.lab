@@ -112,9 +112,9 @@ dhcp-52	 IN	 A	 10.10.15.52
 dhcp-53	 IN	 A	 10.10.15.53
 dhcp-54	 IN	 A	 10.10.15.54
 dhcp-55	 IN	 A	 10.10.15.55
-dhcp-56	 IN	 A	 10.10.15.56
-dhcp-57	 IN	 A	 10.10.15.57
-dhcp-58	 IN	 A	 10.10.15.58
+stackstate	 IN	 A	 10.10.15.56
+stackstate	 IN	 A	 10.10.15.57
+stackstate	 IN	 A	 10.10.15.58
 dhcp-59	 IN	 A	 10.10.15.59
 dhcp-60	 IN	 A	 10.10.15.60
 dhcp-61	 IN	 A	 10.10.15.61
