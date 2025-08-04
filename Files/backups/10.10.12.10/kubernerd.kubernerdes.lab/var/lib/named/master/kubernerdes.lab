@@ -1,7 +1,7 @@
 $TTL 604800 
 $ORIGIN kubernerdes.lab. 
 @	IN SOA      kubernerd.kubernerdes.lab.  root.kubernerdes.lab. ( 
-            2025070801 ; Serial
+            2025073101 ; Serial
             604800     ; Refresh
             86400      ; Retry
             2419200    ; Expire
@@ -25,11 +25,6 @@ nuc-02		IN	A	10.10.12.102
 nuc-03		IN	A	10.10.12.103
 nuc-04		IN	A	10.10.12.104
 nuc-05		IN	A	10.10.12.105
-nuc-01-bmc	IN	A	10.10.12.111
-nuc-02-bmc	IN	A	10.10.12.112
-nuc-03-bmc	IN	A	10.10.12.113
-nuc-04-bmc	IN	A	10.10.12.114
-nuc-05-bmc	IN	A	10.10.12.115
 
 rancher-lb	IN	A	10.10.12.119
 rancher		IN	A	10.10.12.120
@@ -53,6 +48,9 @@ harv-rke2-02	IN	A	10.10.12.172
 harv-rke2-03	IN	A	10.10.12.173
 
 suse-mlm-01	IN	A	10.10.12.201
+stackstate	IN	A	10.10.12.202
+stackstate	IN	AAAA	fe80::250:56ff:feb4:c462
+
 aperaturelabs 	IN	A	10.10.12.250
 aristotle 	IN	A	10.10.12.251
 
@@ -112,15 +110,15 @@ dhcp-52	 IN	 A	 10.10.15.52
 dhcp-53	 IN	 A	 10.10.15.53
 dhcp-54	 IN	 A	 10.10.15.54
 dhcp-55	 IN	 A	 10.10.15.55
-stackstate	 IN	 A	 10.10.15.56
-stackstate	 IN	 A	 10.10.15.57
-stackstate	 IN	 A	 10.10.15.58
-dhcp-59	 IN	 A	 10.10.15.59
-dhcp-60	 IN	 A	 10.10.15.60
-dhcp-61	 IN	 A	 10.10.15.61
-dhcp-62	 IN	 A	 10.10.15.62
-dhcp-63	 IN	 A	 10.10.15.63
-dhcp-64	 IN	 A	 10.10.15.64
+dhcp-56	IN	 A	 10.10.15.56
+dhcp-57	IN	 A	 10.10.15.57
+dhcp-58	IN	 A	 10.10.15.58
+dhcp-59 IN	 A	 10.10.15.59
+dhcp-60 IN	 A	 10.10.15.60
+dhcp-61	IN	 A	 10.10.15.61
+dhcp-62	 IN	 A	 10.10.15.63
+dhcp-63	 IN	 A	 10.10.15.64
+dhcp-64	 IN	 A	 10.10.15.65
 dhcp-65	 IN	 A	 10.10.15.65
 dhcp-66	 IN	 A	 10.10.15.66
 dhcp-67	 IN	 A	 10.10.15.67
