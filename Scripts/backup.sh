@@ -16,6 +16,7 @@ SOURCE_CONTENT="
 /etc/named.conf
 /var/lib/named/master/
 /srv/www/htdocs/index*
+/srv/www/htdocs/kubernerdes.php
 /srv/www/htdocs/uptime.sh
 /srv/www/htdocs/Images/
 /srv/www/htdocs/.kube/.htaccess
