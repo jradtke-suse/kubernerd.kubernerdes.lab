@@ -1,6 +1,6 @@
 $TTL 2D 
 12.10.10.in-addr.arpa.   IN SOA dns.kubernerdes.lab. root.kubernerdes.lab. ( 
-                        2025073101	; serial
+                        2025081501	; serial
                         1D              ; refresh
                         2H              ; retry
                         1W              ; expiry
@@ -29,11 +29,15 @@ $TTL 2D
 114	IN	PTR	nuc-04-bmc.kubernerdes.lab.
 115	IN	PTR	nuc-05-bmc.kubernerdes.lab.
 
+118 	IN	PTR	rke2-harv-lb.kubernerdes.lab.
 119	IN	PTR	rancher-lb.kubernerdes.lab.
 120	IN	PTR	rancher.kubernerdes.lab.
 121	IN	PTR	rancher-01.kubernerdes.lab.
 122	IN	PTR	rancher-02.kubernerdes.lab.
 123	IN	PTR	rancher-03.kubernerdes.lab.
+
+130 	IN	PTR	apps.rke2-harv-lb.kubernerdes.lab.
+
 
 140	IN	PTR	vmw-vcenter-01.kubernerdes.lab.
 141	IN	PTR	vmw-esx-01.kubernerdes.lab.
