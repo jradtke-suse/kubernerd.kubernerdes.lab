@@ -119,17 +119,13 @@ foreach ($kubeconfig_files_fullpath as $kubeconfig_file_fullpath) {
   echo "</TR>\n";
 
 }
-// End of cycle (for-loop)
-?>
-</TABLE>
-
-<?php
-echo "<!-- INCLUDE THE SERVICES OVERVIEW HERE -->\n";
-//echo "<BR>Fun starts here " . $kubeconfig . "<BR>\n";
 putenv ("KUBECONFIG=$kubeconfig");
+// End of cycle (for-loop)
+echo "</TABLE>\n";
 
 // *************************************************************************
 // This section will display the exposed services
+echo "<!-- INCLUDE THE SERVICES OVERVIEW HERE -->\n";
 $services_output = shell_exec('kubectl get services -A -o jsonpath=\'{range .items[?(@.spec.type=="LoadBalancer")]}{.metadata.name}{"\t"}{.status.loadBalancer.ingress[0].ip}{"\t"}{.spec.ports[0].port}{"\n"}{end}\'');
 
 $lines = explode("\n", $services_output);
@@ -193,9 +189,9 @@ foreach ($parsed_hosts as $index => $host) {
 }
 echo "</TABLE>\n";
 
-echo "<!-- INCLUDE THE INGRESSES OVERVIEW HERE -->\n";
 // *************************************************************************
 //  This section will display all the ingress hosts that are defined
+echo "<!-- INCLUDE THE INGRESSES OVERVIEW HERE -->\n";
 
 /**
  * Kubernetes Ingress to HTML Links Generator
