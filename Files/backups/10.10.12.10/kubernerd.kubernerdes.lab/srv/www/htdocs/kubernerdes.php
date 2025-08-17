@@ -2,8 +2,8 @@
 
 /**
  * @author      James Radtke <cloudxabide@gmail.com>
- * @version     1.0.1
- * @since       2025-04-20
+ * @version     1.0.2
+ * @since       2025-08-16
  * @package     
  * @license     MIT
  *
@@ -22,7 +22,10 @@
  *                Also, I am not nec. a "coder".  Use at your own risk.  I know that I do ;-)
  *
  *        Todo:  Need to figure out whether kubectl should be an full-path
+ *        Note:  This was written using VI and Claude/Perplexity
  * Change log:
+ * 2025-08-16 - v1.0.2: cleanup the "exec" of the kubectl command.  Also, added a section to display
+ *                        Ingress(es)
  * 2025-04-20 - v1.0.1: All kinds of updates.  Added a section to allow selection of 
  *                        cluster (based on *.kubeconfig files)
  * 2025-01-29 - v1.0.0: Initial release
@@ -33,11 +36,10 @@ $verboseTroubleshooting=0;
 <HTML>
 <HEAD>
   <TITLE>Kubernerdes Clusters and Services | &#169 2025 </TITLE>
-  <!-- <meta http-equiv="refresh" content="3" -->
   <LINK REL="stylesheet" HREF="./styles.css" TYPE="text/css">
-
-<!-- This section is located here as it provides the filename for the meta refresh tag -->
+  <!-- <meta http-equiv="refresh" content="3" -->
 <?php
+// <!-- This section is located here as it provides the filename for the meta refresh tag -->
 // Directory containing kubeconfig files
 $kubeconfig_directory = '/srv/www/.kube';
 
@@ -121,8 +123,8 @@ foreach ($kubeconfig_files_fullpath as $kubeconfig_file_fullpath) {
 ?>
 </TABLE>
 
-<!-- INCLUDE THE SERVICES OVERVIEW HERE -->
 <?php
+echo "<!-- INCLUDE THE SERVICES OVERVIEW HERE -->\n";
 //echo "<BR>Fun starts here " . $kubeconfig . "<BR>\n";
 putenv ("KUBECONFIG=$kubeconfig");
 
@@ -189,24 +191,290 @@ foreach ($parsed_hosts as $index => $host) {
     echo "<TD><A HREF=" . $http_prefix . "://" . $host['ip'] . ":" . $host['port'] . " target=pane" . $index . ">" . $http_prefix . "://" . $host['ip'] . ":" . $host['port'] . " </A></TD>" ;
     echo "</TR>\n";
 }
+echo "</TABLE>\n";
 
+echo "<!-- INCLUDE THE INGRESSES OVERVIEW HERE -->\n";
 // *************************************************************************
 //  This section will display all the ingress hosts that are defined
-//$cmd = "kubectl get ingress --all-namespaces --no-headers";
-//exec($cmd, $output, $status);
-//$lines = explode("\n", $output);
-//$parsed_ingresses = array();
+
+/**
+ * Kubernetes Ingress to HTML Links Generator
+ * 
+ * This script runs kubectl to get all ingress resources across all namespaces,
+ * parses the output, and generates HTML links based on port configuration.
+ */
+
+function getIngressData() {
+    // Run kubectl command to get all ingress resources in JSON format
+    $command = 'kubectl get ingress --all-namespaces -o json 2>/dev/null';
+    $output = shell_exec($command);
+    
+    if ($output === null) {
+        throw new Exception("Failed to execute kubectl command. Make sure kubectl is installed and configured.");
+    }
+    
+    $data = json_decode($output, true);
+    if ($data === null) {
+        throw new Exception("Failed to parse kubectl JSON output.");
+    }
+    
+    return $data;
+}
+
+function parseIngressRules($ingress) {
+    $links = [];
+    $namespace = $ingress['metadata']['namespace'];
+    $name = $ingress['metadata']['name'];
+    
+    if (!isset($ingress['spec']['rules']) || !is_array($ingress['spec']['rules'])) {
+        return $links;
+    }
+    
+    foreach ($ingress['spec']['rules'] as $rule) {
+        if (!isset($rule['host'])) {
+            continue;
+        }
+        
+        $host = $rule['host'];
+        $exposedPorts = [];
+        
+        // Check if TLS is configured for this host
+        $hasTls = false;
+        if (isset($ingress['spec']['tls']) && is_array($ingress['spec']['tls'])) {
+            foreach ($ingress['spec']['tls'] as $tls) {
+                if (isset($tls['hosts']) && in_array($host, $tls['hosts'])) {
+                    $hasTls = true;
+                    $exposedPorts[] = 443; // HTTPS port
+                    break;
+                }
+            }
+        }
+        
+        // For HTTP traffic, ingress typically exposes port 80
+        if (isset($rule['http']['paths']) && is_array($rule['http']['paths']) && !empty($rule['http']['paths'])) {
+            $exposedPorts[] = 80; // HTTP port
+        }
+        
+        // Check for custom ports in annotations (common for some ingress controllers)
+        if (isset($ingress['metadata']['annotations'])) {
+            $annotations = $ingress['metadata']['annotations'];
+            
+            // Check for nginx ingress custom ports
+            if (isset($annotations['nginx.ingress.kubernetes.io/server-snippet'])) {
+                preg_match_all('/listen\s+(\d+)/', $annotations['nginx.ingress.kubernetes.io/server-snippet'], $matches);
+                if (!empty($matches[1])) {
+                    foreach ($matches[1] as $port) {
+                        $exposedPorts[] = (int)$port;
+                    }
+                }
+            }
+            
+            // Check for custom HTTP/HTTPS ports in other common annotations
+            if (isset($annotations['kubernetes.io/ingress.class'])) {
+                // Some ingress controllers use specific annotations for custom ports
+                foreach ($annotations as $key => $value) {
+                    if (preg_match('/port/', $key) && is_numeric($value)) {
+                        $exposedPorts[] = (int)$value;
+                    }
+                }
+            }
+        }
+        
+        // Remove duplicate ports
+        $exposedPorts = array_unique($exposedPorts);
+        
+        // If no specific ports found, assume standard ports based on TLS config
+        if (empty($exposedPorts)) {
+            if ($hasTls) {
+                $exposedPorts = [443]; // HTTPS only
+            } else {
+                $exposedPorts = [80]; // HTTP only
+            }
+        }
+        
+        // Generate links based on exposed ports
+        foreach ($exposedPorts as $port) {
+            $protocol = determineProtocol($port, $hasTls);
+            $url = $protocol . '://' . $host;
+            
+            // Add port to URL if it's not standard
+            if (($protocol === 'http' && $port != 80) || ($protocol === 'https' && $port != 443)) {
+                $url .= ':' . $port;
+            }
+            
+            $links[] = [
+                'url' => $url,
+                'host' => $host,
+                'port' => $port,
+                'protocol' => $protocol,
+                'namespace' => $namespace,
+                'name' => $name,
+                'has_tls' => $hasTls
+            ];
+        }
+    }
+    
+    return $links;
+}
+
+function determineProtocol($port, $hasTls) {
+    // Use http for port 80, https for port 443 and any other port
+    if ($port == 80) {
+        return 'http';
+    } else {
+        return 'https';
+    }
+}
+
+function generateHtmlTable($allLinks) {
+    if (empty($allLinks)) {
+        return "<p>No ingress resources found.</p>";
+    }
+    
+    //$html .= "<table class=\"ingress-table\">\n";
+    $html .= "<table border=1>\n";
+    $html .= "  <th colspan=7>Kubernerdes Ingress(es)</th>\n";
+    $html .= "    <tr>\n";
+    $html .= "      <th>Namespace</th>\n";
+    $html .= "      <th>Ingress Name</th>\n";
+    $html .= "      <th>Host</th>\n";
+    $html .= "      <th>URL</th>\n";
+    $html .= "      <th>Port</th>\n";
+    $html .= "      <th>Protocol</th>\n";
+    $html .= "      <th>TLS</th>\n";
+    $html .= "    </tr>\n";
+    
+    // Sort links by namespace, then by name
+    usort($allLinks, function($a, $b) {
+        $namespaceCompare = strcmp($a['namespace'], $b['namespace']);
+        if ($namespaceCompare !== 0) {
+            return $namespaceCompare;
+        }
+        return strcmp($a['name'], $b['name']);
+    });
+    
+    foreach ($allLinks as $link) {
+        $tlsIndicator = $link['has_tls'] ? '🔒 Yes' : 'No';
+        $protocolUpper = strtoupper($link['protocol']);
+        
+        $html .= "    <tr>\n";
+        $html .= "      <td>{$link['namespace']}</td>\n";
+        $html .= "      <td>{$link['name']}</td>\n";
+        $html .= "      <td>{$link['host']}</td>\n";
+        $html .= "      <td><a href=\"{$link['url']}\" target=\"_blank\">{$link['url']}</a></td>\n";
+        $html .= "      <td>{$link['port']}</td>\n";
+        $html .= "      <td>{$protocolUpper}</td>\n";
+        $html .= "      <td>{$tlsIndicator}</td>\n";
+        $html .= "    </tr>\n";
+    }
+    
+    $html .= "  </body>\n";
+    $html .= "</table>\n";
+    
+    return $html;
+}
+
+function addStyling() {
+    return "
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background-color: #f5f5f5;
+    }
+//    h2 {
+//        color: #333;
+//        border-bottom: 2px solid #007cba;
+//        padding-bottom: 10px;
+//        margin-bottom: 20px;
+//    }
+//    .ingress-table {
+//        width: 100%;
+//        border-collapse: collapse;
+//        background-color: white;
+//        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+//        border-radius: 8px;
+//        overflow: hidden;
+//    }
+//    .ingress-table th {
+//        background-color: #007cba;
+//        color: white;
+//        padding: 12px;
+//        text-align: left;
+//        font-weight: bold;
+//    }
+//    .ingress-table td {
+//        padding: 10px 12px;
+//        border-bottom: 1px solid #e0e0e0;
+//        vertical-align: middle;
+//    }
+//    .ingress-table tr:nth-child(even) {
+//        background-color: #f9f9f9;
+//    }
+//    .ingress-table tr:hover {
+//        background-color: #f0f8ff;
+//    }
+//    .ingress-table a {
+//        color: #007cba;
+//        text-decoration: none;
+//        font-weight: 500;
+//    }
+//    .ingress-table a:hover {
+//        text-decoration: underline;
+//        color: #005a8b;
+//    }
+    .error {
+        color: #d32f2f;
+        background-color: #ffebee;
+        padding: 10px;
+        border-radius: 4px;
+        border-left: 4px solid #d32f2f;
+    }
+</style>
+";
+}
+
+// Main execution
+try {
+    // Get ingress data from kubectl
+    $ingressData = getIngressData();
+    
+    $allLinks = [];
+    
+    // Process each ingress resource
+    if (isset($ingressData['items']) && is_array($ingressData['items'])) {
+        foreach ($ingressData['items'] as $ingress) {
+            $links = parseIngressRules($ingress);
+            $allLinks = array_merge($allLinks, $links);
+        }
+    }
+    
+    echo generateHtmlTable($allLinks);
+    
+} catch (Exception $e) {
+    echo "<!DOCTYPE html>\n";
+    echo "<html>\n<head>\n";
+    echo "    <title>Error - Kubernetes Ingress Links</title>\n";
+    echo addStyling();
+    echo "</head>\n<body>\n";
+    echo "<div class=\"error\">";
+    echo "<h2>Error</h2>";
+    echo "<p>" . htmlspecialchars($e->getMessage()) . "</p>";
+    echo "</div>";
+    echo "</body>\n</html>";
+}
 
 // *************************************************************************
 //  This section will display "top nodes"
-echo "<TH colspan=4>Kubernerdes Top Nodes</TH> \n";
-echo "<TR><TD colspan=4><pre>";
+echo "<!-- INCLUDE THE TOP NODES HERE -->\n";
+echo "<TABLE border=1><TH COLSPAN=4>Kubernerdes Top Nodes </TH> \n";
+echo "<TR><TD colspan=4>\n";
 // Run kubectl top nodes
 $cmd = "kubectl top nodes";
 exec($cmd, $output_top_nodes, $status);
 
 if ($status === 0) {
-    echo "<pre>";
+    echo "<pre>\n";
     foreach ($output_top_nodes as $line) {
         echo htmlspecialchars($line) . "\n";
     }
@@ -214,18 +482,19 @@ if ($status === 0) {
 } else {
     echo "Error running 'kubectl top nodes' command.";
 }
-echo "</pre></TD></TR> \n";
+echo "</TD></TR> </TABLE>\n";
 
 // *************************************************************************
 //  This section will display "top pods"
-echo "<TH colspan=4>Kubernerdes Top Pods</TH> \n";
-echo "<TR><TD colspan=4> <pre>";
+echo "<!-- INCLUDE THE TOP PODS HERE -->\n";
+echo "<TABLE border=1><TH COLSPAN=4>Kubernerdes Top Pods </TH> \n";
+echo "<TR><TD colspan=4>\n";
 // Run kubectl top pods 
 $cmd = "kubectl top pods -A ";
 exec($cmd, $output_top_pods, $status);
 
 if ($status === 0) {
-    echo "<pre>";
+    echo "<pre>\n";
     foreach ($output_top_pods as $line) {
         echo htmlspecialchars($line) . "\n";
     }
@@ -233,10 +502,7 @@ if ($status === 0) {
 } else {
     echo "Error running 'kubectl top pods' command.";
 }
-echo "</pre></TD></TR> \n";
-
-// let's wrap this up
-echo "</TABLE>";
+echo "</TD></TR> </TABLE>\n";
 ?>
 
 </BODY>
