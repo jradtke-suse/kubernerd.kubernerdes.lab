@@ -12,7 +12,8 @@
  *                I then added top node and top pods
  *                Then, I opted to scan for available *.kubeconfig files and make them a selection
  *
- * Usage:         place this script in /var/www/html and your *.kubeconfig(s) in /var/www/.kube/
+ * Usage:         Place this script in /var/www/html and your *.kubeconfig(s) in /var/www/.kube/
+ *                Place an .htaccess in your <doc_root>/.kube/ directory to prevent access via HTTP/S
  *
  * Dependencies:  http server, php, php-yaml
  *                /var/www/html/, /var/www/.kube/ directory
