@@ -1,6 +1,6 @@
 $TTL 2D 
 12.10.10.in-addr.arpa.   IN SOA dns.kubernerdes.lab. root.kubernerdes.lab. ( 
-                        2025081501	; serial
+                        2025081901	; serial
                         1D              ; refresh
                         2H              ; retry
                         1W              ; expiry
@@ -23,12 +23,8 @@ $TTL 2D
 104	IN	PTR	nuc-04.kubernerdes.lab.
 105	IN	PTR	nuc-05.kubernerdes.lab.
 
-111	IN	PTR	nuc-01-bmc.kubernerdes.lab.
-112	IN	PTR	nuc-02-bmc.kubernerdes.lab.
-113	IN	PTR	nuc-03-bmc.kubernerdes.lab.
-114	IN	PTR	nuc-04-bmc.kubernerdes.lab.
-115	IN	PTR	nuc-05-bmc.kubernerdes.lab.
 
+117 	IN	PTR	observability-lb.kubernerdes.lab.
 118 	IN	PTR	rke2-harv-lb.kubernerdes.lab.
 119	IN	PTR	rancher-lb.kubernerdes.lab.
 120	IN	PTR	rancher.kubernerdes.lab.
@@ -53,8 +49,12 @@ $TTL 2D
 172	IN	PTR	harv-rke2-02.kubernerdes.lab.
 173	IN	PTR	harv-rke2-03.kubernerdes.lab.
 
+180	IN	PTR	observability.kubernerdes.lab.
+181	IN	PTR	observability-01.kubernerdes.lab.
+182	IN	PTR	observability-02.kubernerdes.lab.
+183	IN	PTR	observability-03.kubernerdes.lab.
+
 201	IN	PTR	suse-mlm-01.kubernerdes.lab.
-202	IN	PTR	stackstate.kubernerdes.lab.
 
 250	IN	PTR	aperaturelabs.kubernerdes.lab.
 251	IN	PTR	aristotle.kubernerdes.lab.

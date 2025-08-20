@@ -1,7 +1,7 @@
 $TTL 604800 
 $ORIGIN kubernerdes.lab. 
 @	IN SOA      kubernerd.kubernerdes.lab.  root.kubernerdes.lab. ( 
-            2025081501 ; Serial
+            2025081901 ; Serial
             604800     ; Refresh
             86400      ; Retry
             2419200    ; Expire
@@ -26,8 +26,12 @@ nuc-03		IN	A	10.10.12.103
 nuc-04		IN	A	10.10.12.104
 nuc-05		IN	A	10.10.12.105
 
+; Generally, this is where the LBs will end up
+observability-lb 	IN 	A 	10.10.12.117
 rke2-harv-lb	IN	A	10.10.12.118
 rancher-lb	IN	A	10.10.12.119
+
+; Rancher Cluster
 rancher		IN	A	10.10.12.120
 rancher-01	IN	A	10.10.12.121
 rancher-02	IN	A	10.10.12.122
@@ -48,9 +52,12 @@ harv-rke2-01	IN	A	10.10.12.171
 harv-rke2-02	IN	A	10.10.12.172
 harv-rke2-03	IN	A	10.10.12.173
 
+observability	IN	A	10.10.12.180
+observability-01 IN 	A 	10.10.12.181
+observability-02 IN	 A 	10.10.12.182
+observability-03 IN	 A 	10.10.12.183
+
 suse-mlm-01	IN	A	10.10.12.201
-stackstate	IN	A	10.10.12.202
-stackstate	IN	AAAA	fe80::250:56ff:feb4:c462
 
 aperaturelabs 	IN	A	10.10.12.250
 aristotle 	IN	A	10.10.12.251

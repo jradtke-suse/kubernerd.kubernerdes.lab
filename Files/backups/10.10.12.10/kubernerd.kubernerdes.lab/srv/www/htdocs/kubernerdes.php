@@ -12,8 +12,7 @@
  *                I then added top node and top pods
  *                Then, I opted to scan for available *.kubeconfig files and make them a selection
  *
- * Usage:         Place this script in /var/www/html and your *.kubeconfig(s) in /var/www/.kube/
- *                Place an .htaccess in your <doc_root>/.kube/ directory to prevent access via HTTP/S
+ * Usage:         place this script in /var/www/html and your *.kubeconfig(s) in /var/www/.kube/
  *
  * Dependencies:  http server, php, php-yaml
  *                /var/www/html/, /var/www/.kube/ directory
@@ -61,7 +60,7 @@ echo "  <META http-equiv=\"refresh\" content=\"3; url=./kubernerdes.php?kubeconf
 <BODY>
 
 <TABLE BORDER=1>
-<TH colspan=2>Kubernerdes Clusters</TH>
+<TH colspan=2>Select a Kubernerdes Clusters</TH>
 <TR><TD><span class="boldPara">Cluster Name</TD><TD><span class="boldPara">Kubeconfig</span></TD></TR>
 
 <?php
@@ -124,6 +123,13 @@ putenv ("KUBECONFIG=$kubeconfig");
 // End of cycle (for-loop)
 echo "</TABLE>\n";
 
+echo "<BR> \n";
+
+// This is cheating to get a reference to what cluster is being viewed.  I *should* extract it from the KUBECONFIG that is being used
+$daClusterName = preg_replace('/\.kubeconfig$/', '', $kubeconfig);
+echo "<TABLE><H2>Currently viewing Cluster: " . basename($daClusterName) . "</H2></TABLE> \n";
+
+echo "<BR> \n";
 // *************************************************************************
 // This section will display the exposed services
 echo "<!-- INCLUDE THE SERVICES OVERVIEW HERE -->\n";
@@ -190,6 +196,7 @@ foreach ($parsed_hosts as $index => $host) {
 }
 echo "</TABLE>\n";
 
+echo "<BR> \n";
 // *************************************************************************
 //  This section will display all the ingress hosts that are defined
 echo "<!-- INCLUDE THE INGRESSES OVERVIEW HERE -->\n";
@@ -379,47 +386,6 @@ function addStyling() {
         margin: 20px;
         background-color: #f5f5f5;
     }
-//    h2 {
-//        color: #333;
-//        border-bottom: 2px solid #007cba;
-//        padding-bottom: 10px;
-//        margin-bottom: 20px;
-//    }
-//    .ingress-table {
-//        width: 100%;
-//        border-collapse: collapse;
-//        background-color: white;
-//        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-//        border-radius: 8px;
-//        overflow: hidden;
-//    }
-//    .ingress-table th {
-//        background-color: #007cba;
-//        color: white;
-//        padding: 12px;
-//        text-align: left;
-//        font-weight: bold;
-//    }
-//    .ingress-table td {
-//        padding: 10px 12px;
-//        border-bottom: 1px solid #e0e0e0;
-//        vertical-align: middle;
-//    }
-//    .ingress-table tr:nth-child(even) {
-//        background-color: #f9f9f9;
-//    }
-//    .ingress-table tr:hover {
-//        background-color: #f0f8ff;
-//    }
-//    .ingress-table a {
-//        color: #007cba;
-//        text-decoration: none;
-//        font-weight: 500;
-//    }
-//    .ingress-table a:hover {
-//        text-decoration: underline;
-//        color: #005a8b;
-//    }
     .error {
         color: #d32f2f;
         background-color: #ffebee;
@@ -461,6 +427,7 @@ try {
     echo "</body>\n</html>";
 }
 
+echo "<BR> \n";
 // *************************************************************************
 //  This section will display "top nodes"
 echo "<!-- INCLUDE THE TOP NODES HERE -->\n";
@@ -481,6 +448,7 @@ if ($status === 0) {
 }
 echo "</TD></TR> </TABLE>\n";
 
+echo "<BR> \n";
 // *************************************************************************
 //  This section will display "top pods"
 echo "<!-- INCLUDE THE TOP PODS HERE -->\n";
