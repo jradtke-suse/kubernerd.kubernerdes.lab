@@ -2,7 +2,7 @@
 THISDATETIME=$(date +%F-%H-%M)
 
 export OUTPUTDIR=/srv/www/htdocs/Comporium/$(date +%Y)/$(date +%m)/
-[ ! -d ${OUTPUTDIR} ] && mkdir -p ${OUTPUTDIR}
+[ ! -d ${OUTPUTDIR} ] && { mkdir -p ${OUTPUTDIR}; cp /srv/www/htdocs/Comporium/index.php ${OUTPUTDIR}; }
 
 export OUTPUTFILE=${OUTPUTDIR}/$(date +%F).html
 
