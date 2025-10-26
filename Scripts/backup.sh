@@ -4,7 +4,7 @@
 #            other than what I created it for.
 #    TODO: Still need to add the HTTP files to be backed up
 
-TARGET_ADDR=10.10.12.10
+TARGET_ADDR=10.10.12.8
 TARGET_USER=root # not awesome, but this is for a lab host
 TARGET_BASEDIR="../Files/backups/${TARGET_ADDR}"
 
