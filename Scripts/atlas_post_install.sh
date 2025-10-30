@@ -16,11 +16,11 @@ zypper --non-interactive in -t pattern dhcp_dns_server
 zypper --non-interactive in bind-utils
 cp /etc/named.conf /etc/named.conf.$(date +%F)
 # This is fugly
-curl -o /etc/named.conf https://raw.githubusercontent.com/jradtke-suse/kubernerd.kubernerdes.lab/refs/heads/main/Files/backups/10.10.12.10/kubernerd.kubernerdes.lab/etc/named.conf
+curl -o /etc/named.conf https://raw.githubusercontent.com/jradtke-suse/kubernerd.kubernerdes.lab/refs/heads/main/Files/backups/10.10.12.8/kubernerd.kubernerdes.lab/etc/named.conf
 
 for FILE in kubernerdes.lab db-12.10.10.in-addr.arpa db-13.10.10.in-addr.arpa db-14.10.10.in-addr.arpa db-15.10.10.in-addr.arpa
 do
-  curl -o /var/lib/named/master/$FILE https://raw.githubusercontent.com/jradtke-suse/kubernerd.kubernerdes.lab/refs/heads/main/Files/backups/10.10.12.10/kubernerd.kubernerdes.lab/var/lib/named/master/$FILE
+  curl -o /var/lib/named/master/$FILE https://raw.githubusercontent.com/jradtke-suse/kubernerd.kubernerdes.lab/refs/heads/main/Files/backups/10.10.12.8/kubernerd.kubernerdes.lab/var/lib/named/master/$FILE
 done
 chown named:named /var/lib/named/master/*
 systemctl enable named --now
@@ -29,8 +29,8 @@ systemctl enable named --now
 ## Setup DHCP
 cp /etc/dhcpd.conf /etc/dhcpd.conf.$(date +%F)
 mkdir /etc/dhcpd.d/
-curl -o /etc/dhcpd.conf https://raw.githubusercontent.com/jradtke-suse/kubernerd.kubernerdes.lab/refs/heads/main/Files/backups/10.10.12.10/kubernerd.kubernerdes.lab/etc/dhcpd.conf
-curl -o /etc/dhcpd.d/dhcpd-hosts.conf https://raw.githubusercontent.com/jradtke-suse/kubernerd.kubernerdes.lab/refs/heads/main/Files/backups/10.10.12.10/kubernerd.kubernerdes.lab/etc/dhcpd.d/dhcpd-hosts.conf
+curl -o /etc/dhcpd.conf https://raw.githubusercontent.com/jradtke-suse/kubernerd.kubernerdes.lab/refs/heads/main/Files/backups/10.10.12.8/kubernerd.kubernerdes.lab/etc/dhcpd.conf
+curl -o /etc/dhcpd.d/dhcpd-hosts.conf https://raw.githubusercontent.com/jradtke-suse/kubernerd.kubernerdes.lab/refs/heads/main/Files/backups/10.10.12.8/kubernerd.kubernerdes.lab/etc/dhcpd.d/dhcpd-hosts.conf
 sed -i -e 's/DHCPD_INTERFACE=""/DHCPD_INTERFACE="eth0"/g' /etc/sysconfig/dhcpd
 systemctl enable dhcpd --now
 systemctl status dhcpd
@@ -68,7 +68,8 @@ EOF
 sudo zypper refresh
 sudo zypper --non-interactive in kubectl
 
-# Firewall
+#### #### ####
+# Manage Firewall
 TCP_PORTS="53 80 443"
 for PORT in $TCP_PORTS
 do 
@@ -89,6 +90,8 @@ done
 firewall-cmd --reload
 firewall-cmd --list-all
 
+#### #### ####
+### Install LVM for data
 zypper --non-interactive in lvm
 pvcreate /dev/vdb
 vgcreate vg_data /dev/vdb
@@ -103,4 +106,8 @@ mount -a
 
 cd /srv/www/htdocs
 # TODO - need to figure out the correct URLs for these files
-wget ./kubernerd.kubernerdes.lab/Files/backups/10.10.12.10/kubernerd.kubernerdes.lab/srv/www/htdocs/index.php
+wget ./kubernerd.kubernerdes.lab/Files/backups/10.10.12.8/kubernerd.kubernerdes.lab/srv/www/htdocs/index.php
+
+#### #### ####
+### Install Ansible
+zypper -n in ansible
